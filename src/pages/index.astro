@@ -4,8 +4,18 @@ import Layout from "../layouts/Layout.astro";
 
 <Layout title="Welcome to Astro.">
 	<main>
-		<h1>Runnaway</h1>
-		<p>Improve your running skills by tracking and planning your runs</p>
-		<img src="woman-running.jpg" alt="">
+		<header
+			class="bg-woman-runnig bg-cover h-screen w-screen px-96 py-48 text-white font-mono"
+		>
+			<h1 class="text-6xl">Runnaway</h1>
+			<p class="text-3xl py-4 w-3/4">
+				Improve your running skills by tracking and planning your runs<span
+					class="animate-blink">_</span
+				>
+			</p>
+			<a href="#" class="block w-fit p-4 bg-black rounded-md">
+				Get Started For Free!
+			</a>
+		</header>
 	</main>
 </Layout>
