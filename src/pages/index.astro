@@ -1,11 +1,12 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Form from "../components/form";
 ---
 
 <Layout title="Welcome to Astro.">
 	<main>
 		<header
-			class="bg-woman-runnig bg-cover h-screen w-screen px-96 py-48 text-white font-mono"
+			class="bg-woman-runnig bg-cover h-screen w-screen max-w-full px-96 py-48 text-white font-mono"
 		>
 			<h1 class="text-6xl">Runnaway</h1>
 			<p class="text-3xl py-4 w-3/4">
@@ -13,9 +14,13 @@ import Layout from "../layouts/Layout.astro";
 					class="animate-blink">_</span
 				>
 			</p>
-			<a href="#" class="block w-fit p-4 bg-black rounded-md">
+			<a href="#get-started" class="block w-fit p-4 bg-black rounded-md scroll-smooth">
 				Get Started For Free!
 			</a>
 		</header>
+		<section class="h-screen font-mono " id="get-started">
+			<h2 class="text-3xl py-14 text-center" >Fill with your latest runs</h2>
+			<Form />
+		</section>
 	</main>
 </Layout>
