@@ -28,6 +28,9 @@ function removeRun(run: run): run[] {
 	const currRuns = getRuns();
 
 	const index = currRuns.indexOf(run);
+
+    if(index<0) return currRuns
+        
 	const newRuns = currRuns.splice(index, 1);
 
 	setRuns(newRuns);

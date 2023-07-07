@@ -1,4 +1,10 @@
-import { setRuns, getRuns, addRun, type run } from "./localStorageManager";
+import {
+	setRuns,
+	getRuns,
+	addRun,
+	removeRun,
+	type run,
+} from "./localStorageManager";
 import { useEffect, useState } from "react";
 
 function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
@@ -49,7 +55,10 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 	);
 }
 
-function RunLi({ name, distance, time }: run) {
+type DeleteRun = (arg: run) => void;
+
+function RunLi(run: run, deleteRun: DeleteRun) {
+	const { name, distance, time } = run;
 	const meanVelocity = (distance / time) * 60;
 	const key = `${name}${time}${meanVelocity}`;
 
@@ -59,12 +68,17 @@ function RunLi({ name, distance, time }: run) {
 			<p>distance: {distance} km</p>
 			<p>time: {time} min</p>
 			<p>Mean Velocity: {meanVelocity} km/h</p>
+			<button onClick={() => deleteRun(run)}>Delete</button>
 		</li>
 	);
 }
+interface DSProps {
+	runs: run[];
+	deleteRun: DeleteRun;
+}
 
-function DataVisualizer({ runs }: { runs: run[] }) {
-	const runComp = runs.map(RunLi);
+function DataVisualizer({ runs, deleteRun }: DSProps) {
+	const runComp = runs.map((run) => RunLi(run, deleteRun));
 
 	return <ul className="flex flex-col items-center p-16">{runComp}</ul>;
 }
@@ -74,6 +88,10 @@ export default function FormAndVisualizer() {
 
 	function addNewRun(run: run) {
 		setRuns(addRun(run));
+	}
+
+	function deleteRun(run: run) {
+		setRuns(removeRun(run));
 	}
 
 	useEffect(() => {
@@ -86,7 +104,7 @@ export default function FormAndVisualizer() {
 				Fill with your latest runs
 			</h2>
 			<Form addNewRun={addNewRun} />
-			<DataVisualizer runs={runs} />
+			<DataVisualizer runs={runs} deleteRun={deleteRun} />
 		</section>
 	);
 }
