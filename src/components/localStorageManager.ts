@@ -16,4 +16,12 @@ function setRuns(runs: run[]): void {
 	localStorage.setItem(runTolken, sRuns);
 }
 
-export {getRuns, setRuns, type run}
+function addRun(run: run) {
+	const currRuns = getRuns();
+
+	const newRuns = [...currRuns, run];
+	setRuns(newRuns);
+	return newRuns;
+}
+
+export { getRuns, setRuns, addRun, type run };

@@ -1,7 +1,7 @@
-import { setRuns, getRuns, run } from "./localStorageManager";
+import { setRuns, getRuns, addRun, type run } from "./localStorageManager";
 import { useEffect, useState } from "react";
 
-function Form({ addRun }: { addRun: (arg: run) => void }) {
+function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 	const [distance, setDistance] = useState(0);
 	const [time, setTime] = useState(0);
 	const [runName, setRunName] = useState("");
@@ -16,7 +16,7 @@ function Form({ addRun }: { addRun: (arg: run) => void }) {
 		event.preventDefault();
 
 		const runData = { distance, time, name: runName };
-		addRun(runData);
+		addNewRun(runData);
 
 		resetValues();
 	}
@@ -72,9 +72,8 @@ function DataVisualizer({ runs }: { runs: run[] }) {
 export default function FormAndVisualizer() {
 	const [runs, setRunState] = useState<run[]>([]);
 
-	function addRun(run: run) {
-		setRunState([...runs, run]);
-		setRuns(runs);
+	function addNewRun(run: run) {
+		setRuns(addRun(run));
 	}
 
 	useEffect(() => {
@@ -86,7 +85,7 @@ export default function FormAndVisualizer() {
 			<h2 className="text-3xl py-14 text-center">
 				Fill with your latest runs
 			</h2>
-			<Form addRun={addRun} />
+			<Form addNewRun={addNewRun} />
 			<DataVisualizer runs={runs} />
 		</section>
 	);
