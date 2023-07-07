@@ -21,7 +21,6 @@ function Form() {
 			<label>
 				Distance (Km)
 				<input
-					id="distance"
 					type="number"
 					value={distance}
 					onChange={(e) => setDistance(+e.currentTarget.value)}
@@ -30,7 +29,6 @@ function Form() {
 			<label>
 				Time (minutes)
 				<input
-					id="time"
 					type="number"
 					value={time}
 					onChange={(e) => setTime(+e.currentTarget.value)}
@@ -39,7 +37,6 @@ function Form() {
 			<label>
 				Run name (optinal)
 				<input
-					id="run-name"
 					type="text"
 					value={runName}
 					onChange={(e) => setRunName(e.currentTarget.value)}
@@ -53,7 +50,7 @@ function RunLi({ name, distance, time }: run) {
 	const meanVelocity = (distance / time) * 60;
 
 	return (
-		<li className="flex justify-between w-1/3">
+		<li className="flex justify-between w-1/3" key={`${name}${time}${meanVelocity}`}>
 			<h3>{name}</h3>
 			<p>distance: {distance} km</p>
 			<p>time: {time} min</p>
