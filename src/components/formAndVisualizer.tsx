@@ -87,11 +87,11 @@ export default function FormAndVisualizer() {
 	const [runs, setRunState] = useState<run[]>([]);
 
 	function addNewRun(run: run) {
-		setRuns(addRun(run));
+		setRunState(addRun(run));
 	}
 
 	function deleteRun(run: run) {
-		setRuns(removeRun(run));
+		setRunState(removeRun(run));
 	}
 
 	useEffect(() => {
