@@ -52,7 +52,7 @@ function Form({ addRun }: { addRun: (arg: run) => void }) {
 function RunLi({ name, distance, time }: run) {
 	const meanVelocity = (distance / time) * 60;
 	const key = `${name}${time}${meanVelocity}`;
-    
+
 	return (
 		<li className="flex justify-between w-1/3" key={key}>
 			<h3>{name}</h3>
