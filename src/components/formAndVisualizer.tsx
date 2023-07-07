@@ -6,12 +6,19 @@ function Form() {
 	const [time, setTime] = useState(0);
 	const [runName, setRunName] = useState("");
 
+	function resetValues() {
+		setDistance(0);
+		setTime(0);
+		setRunName("");
+	}
+
 	const runs = getRuns();
 
 	function saveRun(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
 		event.preventDefault();
 		const runData = { distance, time, name: runName };
 
+        resetValues()
 		runs.push(runData);
 		setRuns(runs);
 	}
