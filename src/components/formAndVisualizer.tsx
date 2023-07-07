@@ -14,11 +14,17 @@ function Form({ addRun }: { addRun: (arg: run) => void }) {
 
 	function saveRun(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
 		event.preventDefault();
+
 		const runData = { distance, time, name: runName };
+		addRun(runData);
 
 		resetValues();
-		addRun(runData);
 	}
+
+	type changeEvent = React.ChangeEvent<HTMLInputElement>;
+	const changeDistance = (e: changeEvent) => setDistance(+e.target.value);
+	const changeTime = (e: changeEvent) => setTime(+e.target.value);
+	const changeRunName = (e: changeEvent) => setRunName(e.target.value);
 
 	return (
 		<form className="flex flex-col gap-4 items-baseline w-fit m-auto">
@@ -27,24 +33,16 @@ function Form({ addRun }: { addRun: (arg: run) => void }) {
 				<input
 					type="number"
 					value={distance}
-					onChange={(e) => setDistance(+e.currentTarget.value)}
+					onChange={changeDistance}
 				/>
 			</label>
 			<label>
 				Time (minutes)
-				<input
-					type="number"
-					value={time}
-					onChange={(e) => setTime(+e.currentTarget.value)}
-				/>
+				<input type="number" value={time} onChange={changeTime} />
 			</label>
 			<label>
-				Run name (optinal)
-				<input
-					type="text"
-					value={runName}
-					onChange={(e) => setRunName(e.currentTarget.value)}
-				/>
+				Run name
+				<input type="text" value={runName} onChange={changeRunName} />
 			</label>
 			<button onClick={saveRun}>save run</button>
 		</form>
