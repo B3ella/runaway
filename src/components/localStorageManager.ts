@@ -39,20 +39,15 @@ function findRunIndex(targetRun: run): number {
 
 function removeRun(targetRun: run): run[] {
 	const currRuns = getRuns();
-
 	const index = findRunIndex(targetRun);
 
 	const runDoesNotExist = index < 0;
+	const isLastRun = index === 0;
 
 	if (runDoesNotExist) return currRuns;
-
-	const isLastRun = index === 0;
-	if (isLastRun) {
-		return setRuns([]);
-	}
+	if (isLastRun) return setRuns([]);
 
 	const newRuns = currRuns.splice(index, 1);
-
 	return setRuns(newRuns);
 }
 
