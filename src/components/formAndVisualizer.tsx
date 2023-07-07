@@ -1,5 +1,5 @@
 import { setRuns, getRuns, run } from "./localStorageManager";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function Form() {
 	const [distance, setDistance] = useState(0);
@@ -50,7 +50,10 @@ function RunLi({ name, distance, time }: run) {
 	const meanVelocity = (distance / time) * 60;
 
 	return (
-		<li className="flex justify-between w-1/3" key={`${name}${time}${meanVelocity}`}>
+		<li
+			className="flex justify-between w-1/3"
+			key={`${name}${time}${meanVelocity}`}
+		>
 			<h3>{name}</h3>
 			<p>distance: {distance} km</p>
 			<p>time: {time} min</p>
@@ -60,7 +63,10 @@ function RunLi({ name, distance, time }: run) {
 }
 
 function DataVisualizer() {
-	const runs = getRuns();
+	let [runs, setRun] = useState<run[]>([]);
+	useEffect(() => {
+		setRun(getRuns());
+	}, []);
 	const runComp = runs.map(RunLi);
 
 	return <ul className="flex flex-col items-center p-16">{runComp}</ul>;
