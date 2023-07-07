@@ -1,7 +1,7 @@
 import { setRuns, getRuns, run } from "./localStorageManager";
 import { useEffect, useState } from "react";
 
-function Form() {
+function Form({ addRun }: { addRun: (arg: run) => void }) {
 	const [distance, setDistance] = useState(0);
 	const [time, setTime] = useState(0);
 	const [runName, setRunName] = useState("");
@@ -12,15 +12,12 @@ function Form() {
 		setRunName("");
 	}
 
-	const runs = getRuns();
-
 	function saveRun(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
 		event.preventDefault();
 		const runData = { distance, time, name: runName };
 
-        resetValues()
-		runs.push(runData);
-		setRuns(runs);
+		resetValues();
+		addRun(runData);
 	}
 
 	return (
@@ -69,24 +66,31 @@ function RunLi({ name, distance, time }: run) {
 	);
 }
 
-function DataVisualizer() {
-	let [runs, setRun] = useState<run[]>([]);
-	useEffect(() => {
-		setRun(getRuns());
-	}, []);
+function DataVisualizer({ runs }: { runs: run[] }) {
 	const runComp = runs.map(RunLi);
 
 	return <ul className="flex flex-col items-center p-16">{runComp}</ul>;
 }
 
 export default function FormAndVisualizer() {
+	const [runs, setRunState] = useState<run[]>([]);
+
+	function addRun(run: run) {
+		setRunState([...runs, run]);
+		setRuns(runs);
+	}
+
+	useEffect(() => {
+		setRunState(getRuns());
+	}, []);
+
 	return (
 		<section className="h-screen font-mono " id="get-started">
 			<h2 className="text-3xl py-14 text-center">
 				Fill with your latest runs
 			</h2>
-			<Form />
-			<DataVisualizer />
+			<Form addRun={addRun} />
+			<DataVisualizer runs={runs} />
 		</section>
 	);
 }
