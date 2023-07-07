@@ -1,22 +1,5 @@
 import { useState } from "react";
-
-interface run {
-	name: string;
-	distance: number;
-	time: number;
-}
-
-const runTolken = "run";
-
-function getRuns(): run[] {
-	const runs = localStorage.getItem(runTolken) ?? "[]";
-	return JSON.parse(runs);
-}
-
-function setRuns(runs: run[]): void {
-	const sRuns = JSON.stringify(runs);
-	localStorage.setItem(runTolken, sRuns);
-}
+import { setRuns, getRuns } from "./localStorageManager";
 
 export default function Form() {
 	const [distance, setDistance] = useState(0);
