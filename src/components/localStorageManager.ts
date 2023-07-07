@@ -11,17 +11,17 @@ function getRuns(): run[] {
 	return JSON.parse(runs);
 }
 
-function setRuns(runs: run[]): void {
+function setRuns(runs: run[]): run[] {
 	const sRuns = JSON.stringify(runs);
 	localStorage.setItem(runTolken, sRuns);
+	return runs;
 }
 
 function addRun(run: run): run[] {
 	const currRuns = getRuns();
 
 	const newRuns = [...currRuns, run];
-	setRuns(newRuns);
-	return newRuns;
+	return setRuns(newRuns);
 }
 
 function areTheSameRun(run1: run, run2: run): boolean {
@@ -48,14 +48,12 @@ function removeRun(targetRun: run): run[] {
 
 	const isLastRun = index === 0;
 	if (isLastRun) {
-		setRuns([]);
-		return [];
+		return setRuns([]);
 	}
 
 	const newRuns = currRuns.splice(index, 1);
 
-	setRuns(newRuns);
-	return newRuns;
+	return setRuns(newRuns);
 }
 
 export { getRuns, addRun, removeRun, type run };
