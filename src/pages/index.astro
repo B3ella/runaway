@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Form from "../components/form";
+import DataVisualizer from "../components/visualizer"
 ---
 
 <Layout title="Welcome to Astro.">
@@ -21,6 +22,7 @@ import Form from "../components/form";
 		<section class="h-screen font-mono " id="get-started">
 			<h2 class="text-3xl py-14 text-center" >Fill with your latest runs</h2>
 			<Form client:load />
+			<DataVisualizer client:load />
 		</section>
 	</main>
 </Layout>
