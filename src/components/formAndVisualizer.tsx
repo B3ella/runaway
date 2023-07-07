@@ -1,5 +1,4 @@
 import {
-	setRuns,
 	getRuns,
 	addRun,
 	removeRun,

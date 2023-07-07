@@ -39,4 +39,4 @@ function removeRun(run: run): run[] {
 	return newRuns;
 }
 
-export { getRuns, setRuns, addRun, removeRun, type run };
+export { getRuns, addRun, removeRun, type run };
