@@ -24,14 +24,26 @@ function addRun(run: run): run[] {
 	return newRuns;
 }
 
-function removeRun(run: run): run[] {
+function removeRun(targetRun: run): run[] {
 	const currRuns = getRuns();
 
-	const index = currRuns.indexOf(run);
+	const index = currRuns.findIndex((run) => {
+		const sameDistance = run.distance === targetRun.distance;
+		const sametime = run.time === targetRun.time;
+		const sameName = run.name === targetRun.name;
+		const sameRun = sameDistance && sametime && sameName;
+		return sameRun;
+	});
 
-    const runDoesNotExist = index < 0
+	const runDoesNotExist = index < 0;
 
-    if(runDoesNotExist) return currRuns
+	if (runDoesNotExist) return currRuns;
+
+	const shouldDeleteAllRuns = index === 0;
+	if (shouldDeleteAllRuns) {
+		setRuns([]);
+		return [];
+	}
 
 	const newRuns = currRuns.splice(index, 1);
 
