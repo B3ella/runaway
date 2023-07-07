@@ -1,7 +1,7 @@
+import { setRuns, getRuns, run } from "./localStorageManager";
 import { useState } from "react";
-import { setRuns, getRuns } from "./localStorageManager";
 
-export default function Form() {
+function Form() {
 	const [distance, setDistance] = useState(0);
 	const [time, setTime] = useState(0);
 	const [runName, setRunName] = useState("");
@@ -47,5 +47,36 @@ export default function Form() {
 			</label>
 			<button onClick={saveRun}>save run</button>
 		</form>
+	);
+}
+function RunLi({ name, distance, time }: run) {
+	const meanVelocity = (distance / time) * 60;
+
+	return (
+		<li className="flex justify-between w-1/3">
+			<h3>{name}</h3>
+			<p>distance: {distance} km</p>
+			<p>time: {time} min</p>
+			<p>Mean Velocity: {meanVelocity} km/h</p>
+		</li>
+	);
+}
+
+function DataVisualizer() {
+	const runs = getRuns();
+	const runComp = runs.map(RunLi);
+
+	return <ul className="flex flex-col items-center p-16">{runComp}</ul>;
+}
+
+export default function FormAndVisualizer() {
+	return (
+		<section className="h-screen font-mono " id="get-started">
+			<h2 className="text-3xl py-14 text-center">
+				Fill with your latest runs
+			</h2>
+			<Form />
+			<DataVisualizer />
+		</section>
 	);
 }

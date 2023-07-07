@@ -1,7 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import Form from "../components/form";
-import DataVisualizer from "../components/visualizer"
+import FormAndVisualizer from "../components/formAndVisualizer";
 ---
 
 <Layout title="Welcome to Astro.">
@@ -15,14 +14,13 @@ import DataVisualizer from "../components/visualizer"
 					class="animate-blink">_</span
 				>
 			</p>
-			<a href="#get-started" class="block w-fit p-4 bg-black rounded-md scroll-smooth">
+			<a
+				href="#get-started"
+				class="block w-fit p-4 bg-black rounded-md scroll-smooth"
+			>
 				Get Started For Free!
 			</a>
 		</header>
-		<section class="h-screen font-mono " id="get-started">
-			<h2 class="text-3xl py-14 text-center" >Fill with your latest runs</h2>
-			<Form client:load />
-			<DataVisualizer client:load />
-		</section>
+		<FormAndVisualizer client:load />
 	</main>
 </Layout>
