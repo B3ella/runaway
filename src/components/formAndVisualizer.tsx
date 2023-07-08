@@ -5,6 +5,7 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 	const [distance, setDistance] = useState(0);
 	const [time, setTime] = useState(0);
 	const [runName, setRunName] = useState("");
+	const [date, setDate] = useState(new Date());
 
 	function resetValues() {
 		setDistance(0);
@@ -25,6 +26,7 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 	const changeDistance = (e: changeEvent) => setDistance(+e.target.value);
 	const changeTime = (e: changeEvent) => setTime(+e.target.value);
 	const changeRunName = (e: changeEvent) => setRunName(e.target.value);
+	const changeDate = (e: changeEvent) => setDate(new Date(e.target.value));
 
 	return (
 		<form className="flex flex-col gap-4 items-baseline w-fit m-auto">
@@ -43,6 +45,14 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 			<label>
 				Run name
 				<input type="text" value={runName} onChange={changeRunName} />
+			</label>
+			<label>
+				date{" "}
+				<input
+					type="date"
+					value={date.toString()}
+					onChange={changeDate}
+				/>
 			</label>
 			<button onClick={saveRun}>save run</button>
 		</form>
