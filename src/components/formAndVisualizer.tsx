@@ -7,6 +7,16 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 	const [runName, setRunName] = useState("");
 	const [date, setDate] = useState(new Date());
 
+	function getStringDate() {
+		const year = date.getFullYear().toString();
+		let month = date.getMonth().toString();
+		if (month.length < 2) month = "0" + month;
+		let day = date.getDate().toString();
+		if (day.length < 2) day = "0" + day;
+
+		return `${year}-${month}-${day}`;
+	}
+
 	function resetValues() {
 		setDistance(0);
 		setTime(0);
@@ -50,7 +60,7 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 				date{" "}
 				<input
 					type="date"
-					value={date.toString()}
+					value={getStringDate()}
 					onChange={changeDate}
 				/>
 			</label>
