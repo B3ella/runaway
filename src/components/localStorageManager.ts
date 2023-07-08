@@ -1,7 +1,13 @@
 const runTolken = "run";
+const goalRunTolken = "goalRun";
 
 interface run {
 	name: string;
+	distance: number;
+	time: number;
+}
+
+interface NamelessRun {
 	distance: number;
 	time: number;
 }
@@ -51,4 +57,14 @@ function removeRun(targetRun: run): run[] {
 	return setRuns(newRuns);
 }
 
-export { getRuns, addRun, removeRun, type run };
+function getGoalRun(): NamelessRun | null {
+	const res = localStorage.getItem(goalRunTolken);
+	return res ? JSON.parse(res) : null;
+}
+
+function setGoalRun(run: NamelessRun): void {
+	const StringRun = JSON.stringify(run);
+	localStorage.setItem(runTolken, StringRun);
+}
+
+export { getRuns, addRun, removeRun, getGoalRun, setGoalRun, type run };
