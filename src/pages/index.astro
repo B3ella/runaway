@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import FormAndVisualizer from "../components/formAndVisualizer";
+import SetGoalRun from "../components/setGoalRun";
 ---
 
 <Layout title="Welcome to Astro.">
@@ -22,5 +23,6 @@ import FormAndVisualizer from "../components/formAndVisualizer";
 			</a>
 		</header>
 		<FormAndVisualizer client:load />
+		<SetGoalRun />
 	</main>
 </Layout>
