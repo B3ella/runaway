@@ -5,6 +5,7 @@ interface run {
 	name: string;
 	distance: number;
 	time: number;
+	date: Date;
 }
 
 interface NamelessRun {
