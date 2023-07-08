@@ -49,7 +49,7 @@ function removeRun(targetRun: run): run[] {
 	const index = findRunIndex(targetRun);
 
 	const runDoesNotExist = index < 0;
-	const isLastRun = index === 0;
+	const isLastRun = currRuns.length === 1 && index === 0;
 
 	if (runDoesNotExist) return currRuns;
 	if (isLastRun) return setRuns([]);
