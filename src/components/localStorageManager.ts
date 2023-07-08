@@ -13,8 +13,8 @@ interface NamelessRun {
 }
 
 function getRuns(): run[] {
-	const runs = localStorage.getItem(runTolken) ?? "[]";
-	return JSON.parse(runs);
+	const runs = localStorage.getItem(runTolken);
+	return runs ? JSON.parse(runs) : [];
 }
 
 function setRuns(runs: run[]): run[] {
@@ -64,7 +64,7 @@ function getGoalRun(): NamelessRun | null {
 
 function setGoalRun(run: NamelessRun): void {
 	const StringRun = JSON.stringify(run);
-	localStorage.setItem(runTolken, StringRun);
+	localStorage.setItem(goalRunTolken, StringRun);
 }
 
 export { getRuns, addRun, removeRun, getGoalRun, setGoalRun, type run };
