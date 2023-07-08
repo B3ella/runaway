@@ -48,14 +48,12 @@ function removeRun(targetRun: run): run[] {
 	const currRuns = getRuns();
 	const index = findRunIndex(targetRun);
 
-	const runDoesNotExist = index < 0;
 	const isLastRun = currRuns.length === 1 && index === 0;
-
-	if (runDoesNotExist) return currRuns;
 	if (isLastRun) return setRuns([]);
 
-	const newRuns = currRuns.splice(index, 1);
-	return setRuns(newRuns);
+	currRuns.splice(index, 1);
+	console.log(currRuns, index, targetRun);
+	return setRuns(currRuns);
 }
 
 function getGoalRun(): NamelessRun | null {
