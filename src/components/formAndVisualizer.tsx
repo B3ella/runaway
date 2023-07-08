@@ -1,9 +1,4 @@
-import {
-	getRuns,
-	addRun,
-	removeRun,
-	type run,
-} from "./localStorageManager";
+import { getRuns, addRun, removeRun, type run } from "./localStorageManager";
 import { useEffect, useState } from "react";
 
 function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
@@ -62,12 +57,17 @@ function RunLi(run: run, deleteRun: DeleteRun) {
 	const key = `${name}${time}${meanVelocity}`;
 
 	return (
-		<li className="flex justify-between w-1/3" key={key}>
+		<li className="flex flex-col justify-between lg:w-1/3" key={key}>
 			<h3>{name}</h3>
 			<p>distance: {distance} km</p>
 			<p>time: {time} min</p>
 			<p>Mean Velocity: {meanVelocity} km/h</p>
-			<button onClick={() => deleteRun(run)}>Delete</button>
+			<button
+				className="text-start text-white p-2 mt-2 w-fit bg-red-600 rounded"
+				onClick={() => deleteRun(run)}
+			>
+				Delete
+			</button>
 		</li>
 	);
 }
@@ -79,7 +79,11 @@ interface DSProps {
 function DataVisualizer({ runs, deleteRun }: DSProps) {
 	const runComp = runs.map((run) => RunLi(run, deleteRun));
 
-	return <ul className="flex flex-col items-center p-16">{runComp}</ul>;
+	return (
+		<ul className="flex flex-col gap-4 items-center pt-8 md:p-16">
+			{runComp}
+		</ul>
+	);
 }
 
 export default function FormAndVisualizer() {
