@@ -66,4 +66,12 @@ function setGoalRun(run: NamelessRun): void {
 	localStorage.setItem(goalRunTolken, StringRun);
 }
 
-export { getRuns, addRun, removeRun, getGoalRun, setGoalRun, type run };
+export {
+	getRuns,
+	addRun,
+	removeRun,
+	getGoalRun,
+	setGoalRun,
+	type run,
+	type NamelessRun,
+};

@@ -1,4 +1,11 @@
-import { getRuns, addRun, removeRun, type run } from "./localStorageManager";
+import {
+	getRuns,
+	addRun,
+	removeRun,
+	type run,
+	getGoalRun,
+	NamelessRun,
+} from "./localStorageManager";
 import { useEffect, useState } from "react";
 
 function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
@@ -71,17 +78,25 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 
 type DeleteRun = (arg: run) => void;
 
-function RunLi(run: run, deleteRun: DeleteRun) {
+function RunLi(run: run, deleteRun: DeleteRun, goalRun: NamelessRun) {
 	const { name, distance, time } = run;
+
 	const meanVelocity = (distance / time) * 60;
+	const goalVelocity = (goalRun.distance / goalRun.time) * 60;
+	const distanceToGoal = Math.max(goalRun.distance - distance, 0);
+	const timeToGoal = Math.max(time - goalRun.time, 0);
+
 	const key = `${name}${time}${meanVelocity}`;
 
 	return (
 		<li className="flex flex-col justify-between lg:w-1/3" key={key}>
 			<h3>{name}</h3>
 			<p>distance: {distance} km</p>
+			<p>Distance To Goal: {distanceToGoal} km</p>
 			<p>time: {time} min</p>
+			<p>Time above Goal: {timeToGoal} min</p>
 			<p>Mean Velocity: {meanVelocity} km/h</p>
+			<p>Goal velocity: {goalVelocity} km/h</p>
 			<button
 				className="text-start text-white p-2 mt-2 w-fit bg-red-600 rounded"
 				onClick={() => deleteRun(run)}
@@ -97,8 +112,14 @@ interface DSProps {
 }
 
 function DataVisualizer({ runs, deleteRun }: DSProps) {
-	const runComp = runs.map((run) => RunLi(run, deleteRun));
+	const defaultGoalRun = { distance: 0, time: 0 };
+	const [goalRun, setGoalRun] = useState(defaultGoalRun);
 
+	useEffect(() => {
+		setGoalRun(getGoalRun() ?? defaultGoalRun);
+	}, []);
+
+	const runComp = runs.map((run) => RunLi(run, deleteRun, goalRun));
 	return (
 		<ul className="flex flex-col gap-4 items-center pt-8 md:p-16">
 			{runComp}
