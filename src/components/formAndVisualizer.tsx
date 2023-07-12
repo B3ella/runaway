@@ -131,45 +131,56 @@ function DataVisualizer({ runs, deleteRun }: DSProps) {
 function Graph({ runs }: { runs: run[] }) {
 	const svgRef = useRef<SVGSVGElement>(null);
 	const runNames = runs.map((run) => run.name);
+	const runSpeeds = runs.map((run) => (run.distance / run.time) * 60);
+	const maxSpeed = Math.max(...runSpeeds);
+	const margin = Math.ceil(maxSpeed / 10);
 
 	function drawSVG() {
 		const maxWidth = svgRef.current?.width.baseVal.value ?? 0;
 		const maxHeight = svgRef.current?.height.baseVal.value ?? 0;
-		const yScale = scaleLinear().domain([0, 30]).range([maxHeight, 0]);
+
+		const yScale = scaleLinear()
+			.domain([0, maxSpeed + margin])
+			.range([maxHeight, 0]);
+
 		const xScale = scaleBand()
 			.domain(["", ...runNames])
 			.range([0, maxWidth]);
 
-		let points = `0,${maxHeight} `;
+		const getLinePoints = (x: number, y: number) => `${x},${y} `;
+
+		let linePoints = getLinePoints(0, maxHeight);
 
 		const svg = select(svgRef.current);
 
 		runs.forEach((run) => {
 			const { time, distance, name } = run;
 			const speed = time / distance;
+
 			const x = xScale(name) ?? 0;
 			const y = maxHeight - yScale(speed);
-			points += `${x},${y} `;
+
+			linePoints += getLinePoints(x, y);
+
+			const textOffset = 15;
 
 			svg.append("text")
 				.text(name)
 				.attr("x", x)
-				.attr("y", y - 15);
+				.attr("y", y - textOffset);
 		});
 
 		svg.append("polyline")
-			.attr("points", points)
+			.attr("points", linePoints)
 			.style("stroke", "#000")
 			.style("stroke-width", "2")
 			.style("fill", "none");
-
-		console.log(points);
 	}
 
 	useEffect(() => drawSVG(), [runs]);
 
 	return (
-		<div className="h-[50vh] w-[50vw] m-auto border p-4 flex flex-col border-black">
+		<div className="lg:h-[50vh] lg:w-[50vw] m-auto max-sm:m-4 border p-4 flex flex-col border-black">
 			<h3>{"Speed"} change over time</h3>
 			<svg className="border flex-1 border-black" ref={svgRef} />
 		</div>
