@@ -6,7 +6,8 @@ import {
 	getGoalRun,
 	NamelessRun,
 } from "./localStorageManager";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { select, scaleBand, scaleLinear, tickIncrement, text } from "d3";
 
 function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 	const [distance, setDistance] = useState(0);
@@ -127,6 +128,54 @@ function DataVisualizer({ runs, deleteRun }: DSProps) {
 	);
 }
 
+function Graph({ runs }: { runs: run[] }) {
+	const svgRef = useRef<SVGSVGElement>(null);
+	const runNames = runs.map((run) => run.name);
+
+	function drawSVG() {
+		const maxWidth = svgRef.current?.width.baseVal.value ?? 0;
+		const maxHeight = svgRef.current?.height.baseVal.value ?? 0;
+		const yScale = scaleLinear().domain([0, 30]).range([maxHeight, 0]);
+		const xScale = scaleBand()
+			.domain(["", ...runNames])
+			.range([0, maxWidth]);
+
+		let points = `0,${maxHeight} `;
+
+		const svg = select(svgRef.current);
+
+		runs.forEach((run) => {
+			const { time, distance, name } = run;
+			const speed = time / distance;
+			const x = xScale(name) ?? 0;
+			const y = maxHeight - yScale(speed);
+			points += `${x},${y} `;
+
+			svg.append("text")
+				.text(name)
+				.attr("x", x)
+				.attr("y", y - 15);
+		});
+
+		svg.append("polyline")
+			.attr("points", points)
+			.style("stroke", "#000")
+			.style("stroke-width", "2")
+			.style("fill", "none");
+
+		console.log(points);
+	}
+
+	useEffect(() => drawSVG(), [runs]);
+
+	return (
+		<div className="h-[50vh] w-[50vw] m-auto border p-4 flex flex-col border-black">
+			<h3>{"Speed"} change over time</h3>
+			<svg className="border flex-1 border-black" ref={svgRef} />
+		</div>
+	);
+}
+
 export default function FormAndVisualizer() {
 	const [runs, setRunState] = useState<run[]>([]);
 
@@ -143,12 +192,13 @@ export default function FormAndVisualizer() {
 	}, []);
 
 	return (
-		<section className="h-screen font-mono " id="get-started">
+		<section className="min-h-screen font-mono " id="get-started">
 			<h2 className="text-3xl py-14 text-center">
 				Fill with your latest runs
 			</h2>
 			<Form addNewRun={addNewRun} />
 			<DataVisualizer runs={runs} deleteRun={deleteRun} />
+			<Graph runs={runs} />
 		</section>
 	);
 }
