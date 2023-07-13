@@ -176,15 +176,10 @@ function getLinePointsFor(x: string, y: number, scale: scale): point {
 	const point = { x: 0, y: 0 };
 	point.x = xScale(x) ?? 0;
 	point.y = maxHeight - yScale(y);
-
 	return point;
 }
 function formatLinePoints({ x, y }: point): string {
 	return `${x},${y} `;
-}
-function getFormatedLinePoints(x: string, y: number, scale: scale): string {
-	const points = getLinePointsFor(x, y, scale);
-	return formatLinePoints(points);
 }
 
 function drawSVG(runs: run[], svgRef: React.RefObject<SVGSVGElement>) {
@@ -193,7 +188,7 @@ function drawSVG(runs: run[], svgRef: React.RefObject<SVGSVGElement>) {
 
 	const scale = getScales(runs, svgRef);
 
-	let linePoints = getFormatedLinePoints("", 0, scale);
+	let linePoints = formatLinePoints({ x: 0, y: scale.maxHeight });
 
 	runs.forEach((run) => {
 		const { name } = run;
