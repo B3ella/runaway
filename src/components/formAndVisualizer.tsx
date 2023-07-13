@@ -146,6 +146,7 @@ interface scale {
 	xScale: ScaleBand<string>;
 	yScale: ScaleLinear<number, number, never>;
 	maxHeight: number;
+	maxWidth: number;
 }
 function getScales(runs: run[], svgRef: React.RefObject<SVGSVGElement>): scale {
 	const runNames = runs.map((run) => run.name);
@@ -163,7 +164,7 @@ function getScales(runs: run[], svgRef: React.RefObject<SVGSVGElement>): scale {
 		.domain(["", ...runNames])
 		.range([0, maxWidth]);
 
-	return { xScale, yScale, maxHeight };
+	return { xScale, yScale, maxHeight, maxWidth };
 }
 
 interface point {
