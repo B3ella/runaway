@@ -185,12 +185,17 @@ function formatLinePoints({ x, y }: point): string {
 	return `${x},${y} `;
 }
 
-function drawText(point: point, text: string, parent: SVGRef) {
-	select(parent.current)
+function drawText(runs: run[], scale: scale, svgRef: SVGRef) {
+	const { maxHeight, yScale, xScale } = scale;
+	const svg = select(svgRef.current);
+	const textOffset = 15;
+	svg.selectAll("text")
+		.data(runs)
+		.enter()
 		.append("text")
-		.text(text)
-		.attr("x", point.x)
-		.attr("y", point.y);
+		.text((run) => run.name)
+		.attr("y", (run) => maxHeight - yScale(calcSpeed(run)) - textOffset)
+		.attr("x", (run) => xScale(run.name) ?? 0);
 }
 
 function drawSVG(runs: run[], svgRef: SVGRef) {
@@ -198,6 +203,7 @@ function drawSVG(runs: run[], svgRef: SVGRef) {
 	const polyline = svg.select("polyline");
 
 	const scale = getScales(runs, svgRef);
+	drawText(runs, scale, svgRef);
 
 	let linePoints = formatLinePoints({ x: 0, y: scale.maxHeight });
 
@@ -207,11 +213,6 @@ function drawSVG(runs: run[], svgRef: SVGRef) {
 
 		const point = getLinePointsFor(name, speed, scale);
 		linePoints += formatLinePoints(point);
-
-		const textOffset = 15;
-
-		point.y -= textOffset;
-		drawText(point, name, svgRef);
 	});
 
 	polyline.attr("points", linePoints);
