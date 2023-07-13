@@ -149,54 +149,53 @@ function calcSpeed({
 	return KMPerHour;
 }
 
-function Graph({ runs }: { runs: run[] }) {
-	const svgRef = useRef<SVGSVGElement>(null);
+function drawSVG(runs: run[], svgRef: React.RefObject<SVGSVGElement>) {
 	const svg = select(svgRef.current);
 	const polyline = svg.select("polyline");
 
-	function drawSVG() {
-		const runNames = runs.map((run) => run.name);
-		const runSpeeds = runs.map(calcSpeed);
+	const runNames = runs.map((run) => run.name);
+	const runSpeeds = runs.map(calcSpeed);
 
-		const maxWidth = svgRef.current?.width.baseVal.value ?? 0;
-		const maxHeight = svgRef.current?.height.baseVal.value ?? 0;
+	const maxWidth = svgRef.current?.width.baseVal.value ?? 0;
+	const maxHeight = svgRef.current?.height.baseVal.value ?? 0;
 
-		const maxSpeed = Math.max(...runSpeeds);
-		const margin = Math.ceil(maxSpeed / 10);
-		const topDomain = maxSpeed + margin;
+	const maxSpeed = Math.max(...runSpeeds);
+	const margin = Math.ceil(maxSpeed / 10);
+	const topDomain = maxSpeed + margin;
 
-		const yScale = scaleLinear()
-			.domain([0, topDomain])
-			.range([0, maxHeight]);
+	const yScale = scaleLinear().domain([0, topDomain]).range([0, maxHeight]);
 
-		const xScale = scaleBand()
-			.domain(["", ...runNames])
-			.range([0, maxWidth]);
+	const xScale = scaleBand()
+		.domain(["", ...runNames])
+		.range([0, maxWidth]);
 
-		const getLinePoints = (x: number, y: number) => `${x},${y} `;
+	const getLinePoints = (x: number, y: number) => `${x},${y} `;
 
-		let linePoints = getLinePoints(0, maxHeight);
+	let linePoints = getLinePoints(0, maxHeight);
 
-		runs.forEach((run) => {
-			const { name } = run;
-			const speed = calcSpeed(run);
+	runs.forEach((run) => {
+		const { name } = run;
+		const speed = calcSpeed(run);
 
-			const x = xScale(name) ?? 0;
-			const y = maxHeight - yScale(speed);
-			linePoints += getLinePoints(x, y);
+		const x = xScale(name) ?? 0;
+		const y = maxHeight - yScale(speed);
+		linePoints += getLinePoints(x, y);
 
-			const textOffset = 15;
+		const textOffset = 15;
 
-			svg.append("text")
-				.text(name)
-				.attr("x", x)
-				.attr("y", y - textOffset);
-		});
+		svg.append("text")
+			.text(name)
+			.attr("x", x)
+			.attr("y", y - textOffset);
+	});
 
-		polyline.attr("points", linePoints);
-	}
+	polyline.attr("points", linePoints);
+}
 
-	useEffect(() => drawSVG(), [runs]);
+function Graph({ runs }: { runs: run[] }) {
+	const svgRef = useRef<SVGSVGElement>(null);
+
+	useEffect(() => drawSVG(runs, svgRef), [runs]);
 
 	return (
 		<div className="lg:h-[50vh] lg:w-[50vw] m-auto max-sm:m-4 border p-4 flex flex-col border-black">
