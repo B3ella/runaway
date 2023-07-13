@@ -183,6 +183,18 @@ function formatLinePoints({ x, y }: point): string {
 	return `${x},${y} `;
 }
 
+function drawText(
+	point: point,
+	text: string,
+	parent: React.RefObject<SVGSVGElement>
+) {
+	select(parent.current)
+		.append("text")
+		.text(text)
+		.attr("x", point.x)
+		.attr("y", point.y);
+}
+
 function drawSVG(runs: run[], svgRef: React.RefObject<SVGSVGElement>) {
 	const svg = select(svgRef.current);
 	const polyline = svg.select("polyline");
@@ -200,10 +212,8 @@ function drawSVG(runs: run[], svgRef: React.RefObject<SVGSVGElement>) {
 
 		const textOffset = 15;
 
-		svg.append("text")
-			.text(name)
-			.attr("x", point.x)
-			.attr("y", point.y - textOffset);
+		point.y -= textOffset;
+		drawText(point, name, svgRef);
 	});
 
 	polyline.attr("points", linePoints);
