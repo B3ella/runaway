@@ -7,7 +7,14 @@ import {
 	NamelessRun,
 } from "./localStorageManager";
 import { useEffect, useState, useRef } from "react";
-import { select, scaleBand, scaleLinear, tickIncrement, text } from "d3";
+import {
+	select,
+	scaleBand,
+	scaleLinear,
+	tickIncrement,
+	text,
+	ribbon,
+} from "d3";
 
 function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 	const [distance, setDistance] = useState(0);
@@ -128,12 +135,26 @@ function DataVisualizer({ runs, deleteRun }: DSProps) {
 	);
 }
 
+function calcSpeed({
+	distance,
+	time,
+}: {
+	distance: number;
+	time: number;
+}): number {
+	const KMPerMin = distance / time;
+	const minInAnHour = 60;
+	const KMPerHour = KMPerMin * minInAnHour;
+
+	return KMPerHour;
+}
+
 function Graph({ runs }: { runs: run[] }) {
 	const svgRef = useRef<SVGSVGElement>(null);
 
 	function drawSVG() {
 		const runNames = runs.map((run) => run.name);
-		const runSpeeds = runs.map((run) => (run.distance / run.time) * 60);
+		const runSpeeds = runs.map(calcSpeed);
 
 		const maxWidth = svgRef.current?.width.baseVal.value ?? 0;
 		const maxHeight = svgRef.current?.height.baseVal.value ?? 0;
@@ -157,8 +178,8 @@ function Graph({ runs }: { runs: run[] }) {
 		const svg = select(svgRef.current);
 
 		runs.forEach((run) => {
-			const { time, distance, name } = run;
-			const speed = (distance / time) * 60;
+			const { name } = run;
+			const speed = calcSpeed(run);
 
 			const x = xScale(name) ?? 0;
 			const y = maxHeight - yScale(speed);
