@@ -152,11 +152,7 @@ function calcSpeed({
 function Graph({ runs }: { runs: run[] }) {
 	const svgRef = useRef<SVGSVGElement>(null);
 	const svg = select(svgRef.current);
-	const polyline = svg
-		.append("polyline")
-		.style("stroke", "#000")
-		.style("stroke-width", "2")
-		.style("fill", "none");
+	const polyline = svg.select("polyline");
 
 	function drawSVG() {
 		const runNames = runs.map((run) => run.name);
@@ -197,7 +193,7 @@ function Graph({ runs }: { runs: run[] }) {
 				.attr("y", y - textOffset);
 		});
 
-		svg.select("polyline").attr("points", linePoints);
+		polyline.attr("points", linePoints);
 	}
 
 	useEffect(() => drawSVG(), [runs]);
@@ -205,7 +201,9 @@ function Graph({ runs }: { runs: run[] }) {
 	return (
 		<div className="lg:h-[50vh] lg:w-[50vw] m-auto max-sm:m-4 border p-4 flex flex-col border-black">
 			<h3>{"Speed"} change over time</h3>
-			<svg className="border flex-1 border-black" ref={svgRef} />
+			<svg className="border flex-1 border-black" ref={svgRef}>
+				<polyline stroke="#000" strokeWidth="2" fill="none" />
+			</svg>
 		</div>
 	);
 }
