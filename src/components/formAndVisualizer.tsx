@@ -169,24 +169,42 @@ function drawSVG(runs: run[], svgRef: React.RefObject<SVGSVGElement>) {
 		.domain(["", ...runNames])
 		.range([0, maxWidth]);
 
-	const getLinePoints = (x: number, y: number) => `${x},${y} `;
+	interface point {
+		x: number;
+		y: number;
+	}
+	function getLinePointsFor(x: string, y: number): point {
+		const point = { x: 0, y: 0 };
+		point.x = xScale(x) ?? 0;
+		point.y = maxHeight - yScale(y);
 
-	let linePoints = getLinePoints(0, maxHeight);
+		return point;
+	}
+
+	function formatLinePoints({ x, y }: point): string {
+		return `${x},${y} `;
+	}
+
+	function getFormatedLinePoints(x: string, y: number): string {
+		const points = getLinePointsFor(x, y);
+		return formatLinePoints(points);
+	}
+
+	let linePoints = getFormatedLinePoints("", 0);
 
 	runs.forEach((run) => {
 		const { name } = run;
 		const speed = calcSpeed(run);
 
-		const x = xScale(name) ?? 0;
-		const y = maxHeight - yScale(speed);
-		linePoints += getLinePoints(x, y);
+		const point = getLinePointsFor(name, speed);
+		linePoints += formatLinePoints(point);
 
 		const textOffset = 15;
 
 		svg.append("text")
 			.text(name)
-			.attr("x", x)
-			.attr("y", y - textOffset);
+			.attr("x", point.x)
+			.attr("y", point.y - textOffset);
 	});
 
 	polyline.attr("points", linePoints);
