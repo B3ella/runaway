@@ -199,9 +199,6 @@ function drawText(runs: run[], scale: scale, svgRef: SVGRef) {
 }
 
 function drawSVG(runs: run[], svgRef: SVGRef) {
-	const svg = select(svgRef.current);
-	const polyline = svg.select("polyline");
-
 	const scale = getScales(runs, svgRef);
 	drawText(runs, scale, svgRef);
 
@@ -215,6 +212,7 @@ function drawSVG(runs: run[], svgRef: SVGRef) {
 		linePoints += formatLinePoints(point);
 	});
 
+	const polyline = select(svgRef.current).select("polyline");
 	polyline.attr("points", linePoints);
 }
 
