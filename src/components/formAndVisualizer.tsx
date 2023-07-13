@@ -130,18 +130,21 @@ function DataVisualizer({ runs, deleteRun }: DSProps) {
 
 function Graph({ runs }: { runs: run[] }) {
 	const svgRef = useRef<SVGSVGElement>(null);
-	const runNames = runs.map((run) => run.name);
-	const runSpeeds = runs.map((run) => (run.distance / run.time) * 60);
-	const maxSpeed = Math.max(...runSpeeds);
-	const margin = Math.ceil(maxSpeed / 10);
 
 	function drawSVG() {
+		const runNames = runs.map((run) => run.name);
+		const runSpeeds = runs.map((run) => (run.distance / run.time) * 60);
+
 		const maxWidth = svgRef.current?.width.baseVal.value ?? 0;
 		const maxHeight = svgRef.current?.height.baseVal.value ?? 0;
 
+		const maxSpeed = Math.max(...runSpeeds);
+		const margin = Math.ceil(maxSpeed / 10);
+		const topDomain = maxSpeed + margin;
+
 		const yScale = scaleLinear()
-			.domain([0, maxSpeed + margin])
-			.range([maxHeight, 0]);
+			.domain([0, topDomain])
+			.range([0, maxHeight]);
 
 		const xScale = scaleBand()
 			.domain(["", ...runNames])
@@ -155,11 +158,10 @@ function Graph({ runs }: { runs: run[] }) {
 
 		runs.forEach((run) => {
 			const { time, distance, name } = run;
-			const speed = time / distance;
+			const speed = (distance / time) * 60;
 
 			const x = xScale(name) ?? 0;
 			const y = maxHeight - yScale(speed);
-
 			linePoints += getLinePoints(x, y);
 
 			const textOffset = 15;
