@@ -151,6 +151,12 @@ function calcSpeed({
 
 function Graph({ runs }: { runs: run[] }) {
 	const svgRef = useRef<SVGSVGElement>(null);
+	const svg = select(svgRef.current);
+	const polyline = svg
+		.append("polyline")
+		.style("stroke", "#000")
+		.style("stroke-width", "2")
+		.style("fill", "none");
 
 	function drawSVG() {
 		const runNames = runs.map((run) => run.name);
@@ -175,8 +181,6 @@ function Graph({ runs }: { runs: run[] }) {
 
 		let linePoints = getLinePoints(0, maxHeight);
 
-		const svg = select(svgRef.current);
-
 		runs.forEach((run) => {
 			const { name } = run;
 			const speed = calcSpeed(run);
@@ -193,11 +197,7 @@ function Graph({ runs }: { runs: run[] }) {
 				.attr("y", y - textOffset);
 		});
 
-		svg.append("polyline")
-			.attr("points", linePoints)
-			.style("stroke", "#000")
-			.style("stroke-width", "2")
-			.style("fill", "none");
+		svg.select("polyline").attr("points", linePoints);
 	}
 
 	useEffect(() => drawSVG(), [runs]);
