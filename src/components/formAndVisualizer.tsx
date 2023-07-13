@@ -212,7 +212,19 @@ function drawSVG(runs: run[], svgRef: React.RefObject<SVGSVGElement>) {
 function Graph({ runs }: { runs: run[] }) {
 	const svgRef = useRef<SVGSVGElement>(null);
 
-	useEffect(() => drawSVG(runs, svgRef), [runs]);
+	const [width, setWidth] = useState(0);
+	const [height, setHeight] = useState(0);
+	function handleResize() {
+		setWidth(window.innerWidth);
+		setHeight(window.innerHeight);
+	}
+
+	useEffect(() => {
+		handleResize();
+		window.addEventListener("resize", handleResize);
+	}, []);
+
+	useEffect(() => drawSVG(runs, svgRef), [runs, width, height]);
 
 	return (
 		<div className="lg:h-[50vh] lg:w-[50vw] m-auto max-sm:m-4 border p-4 flex flex-col border-black">
