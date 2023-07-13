@@ -7,14 +7,7 @@ import {
 	NamelessRun,
 } from "./localStorageManager";
 import { useEffect, useState, useRef } from "react";
-import {
-	select,
-	scaleBand,
-	scaleLinear,
-	tickIncrement,
-	text,
-	ribbon,
-} from "d3";
+import { select, scaleBand, scaleLinear, ScaleBand, ScaleLinear } from "d3";
 
 function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 	const [distance, setDistance] = useState(0);
@@ -149,10 +142,12 @@ function calcSpeed({
 	return KMPerHour;
 }
 
-function drawSVG(runs: run[], svgRef: React.RefObject<SVGSVGElement>) {
-	const svg = select(svgRef.current);
-	const polyline = svg.select("polyline");
-
+interface scale {
+	xScale: ScaleBand<string>;
+	yScale: ScaleLinear<number, number, never>;
+	maxHeight: number;
+}
+function getScales(runs: run[], svgRef: React.RefObject<SVGSVGElement>): scale {
 	const runNames = runs.map((run) => run.name);
 	const runSpeeds = runs.map(calcSpeed);
 
@@ -162,41 +157,49 @@ function drawSVG(runs: run[], svgRef: React.RefObject<SVGSVGElement>) {
 	const maxSpeed = Math.max(...runSpeeds);
 	const margin = Math.ceil(maxSpeed / 10);
 	const topDomain = maxSpeed + margin;
-
 	const yScale = scaleLinear().domain([0, topDomain]).range([0, maxHeight]);
 
 	const xScale = scaleBand()
 		.domain(["", ...runNames])
 		.range([0, maxWidth]);
 
-	interface point {
-		x: number;
-		y: number;
-	}
-	function getLinePointsFor(x: string, y: number): point {
-		const point = { x: 0, y: 0 };
-		point.x = xScale(x) ?? 0;
-		point.y = maxHeight - yScale(y);
+	return { xScale, yScale, maxHeight };
+}
 
-		return point;
-	}
+interface point {
+	x: number;
+	y: number;
+}
 
-	function formatLinePoints({ x, y }: point): string {
-		return `${x},${y} `;
-	}
+function getLinePointsFor(x: string, y: number, scale: scale): point {
+	const { xScale, yScale, maxHeight } = scale;
+	const point = { x: 0, y: 0 };
+	point.x = xScale(x) ?? 0;
+	point.y = maxHeight - yScale(y);
 
-	function getFormatedLinePoints(x: string, y: number): string {
-		const points = getLinePointsFor(x, y);
-		return formatLinePoints(points);
-	}
+	return point;
+}
+function formatLinePoints({ x, y }: point): string {
+	return `${x},${y} `;
+}
+function getFormatedLinePoints(x: string, y: number, scale: scale): string {
+	const points = getLinePointsFor(x, y, scale);
+	return formatLinePoints(points);
+}
 
-	let linePoints = getFormatedLinePoints("", 0);
+function drawSVG(runs: run[], svgRef: React.RefObject<SVGSVGElement>) {
+	const svg = select(svgRef.current);
+	const polyline = svg.select("polyline");
+
+	const scale = getScales(runs, svgRef);
+
+	let linePoints = getFormatedLinePoints("", 0, scale);
 
 	runs.forEach((run) => {
 		const { name } = run;
 		const speed = calcSpeed(run);
 
-		const point = getLinePointsFor(name, speed);
+		const point = getLinePointsFor(name, speed, scale);
 		linePoints += formatLinePoints(point);
 
 		const textOffset = 15;
