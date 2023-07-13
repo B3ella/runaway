@@ -148,7 +148,9 @@ interface scale {
 	maxHeight: number;
 	maxWidth: number;
 }
-function getScales(runs: run[], svgRef: React.RefObject<SVGSVGElement>): scale {
+type SVGRef = React.RefObject<SVGSVGElement>;
+
+function getScales(runs: run[], svgRef: SVGRef): scale {
 	const runNames = runs.map((run) => run.name);
 	const runSpeeds = runs.map(calcSpeed);
 
@@ -183,11 +185,7 @@ function formatLinePoints({ x, y }: point): string {
 	return `${x},${y} `;
 }
 
-function drawText(
-	point: point,
-	text: string,
-	parent: React.RefObject<SVGSVGElement>
-) {
+function drawText(point: point, text: string, parent: SVGRef) {
 	select(parent.current)
 		.append("text")
 		.text(text)
@@ -195,7 +193,7 @@ function drawText(
 		.attr("y", point.y);
 }
 
-function drawSVG(runs: run[], svgRef: React.RefObject<SVGSVGElement>) {
+function drawSVG(runs: run[], svgRef: SVGRef) {
 	const svg = select(svgRef.current);
 	const polyline = svg.select("polyline");
 
