@@ -16,24 +16,24 @@ function pad(string: string, char: string, length: number): string {
 	return string;
 }
 
+function formatDateToString(date: Date) {
+	let year = date.getFullYear().toString();
+	year = pad(year, "0", 4);
+
+	let month = date.getMonth().toString();
+	month = pad(month, "0", 2);
+
+	let day = date.getDate().toString();
+	day = pad(day, "0", 2);
+
+	return `${year}-${month}-${day}`;
+}
+
 function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 	const [distance, setDistance] = useState(0);
 	const [time, setTime] = useState(0);
 	const [runName, setRunName] = useState("");
 	const [date, setDate] = useState(new Date());
-
-	function getStringDate() {
-		let year = date.getFullYear().toString();
-		year = pad(year, "0", 4);
-
-		let month = date.getMonth().toString();
-		month = pad(month, "0", 2);
-
-		let day = date.getDate().toString();
-		day = pad(day, "0", 2);
-
-		return `${year}-${month}-${day}`;
-	}
 
 	function resetValues() {
 		setDistance(0);
@@ -77,7 +77,7 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 				date{" "}
 				<input
 					type="date"
-					value={getStringDate()}
+					value={formatDateToString(date)}
 					onChange={changeDate}
 				/>
 			</label>
@@ -91,8 +91,8 @@ type DeleteRun = (arg: run) => void;
 function RunLi(run: run, deleteRun: DeleteRun, goalRun: NamelessRun) {
 	const { name, distance, time } = run;
 
-	const meanVelocity = (distance / time) * 60;
-	const goalVelocity = (goalRun.distance / goalRun.time) * 60;
+	const meanVelocity = calcSpeed(run);
+	const goalVelocity = calcSpeed(goalRun);
 	const distanceToGoal = Math.max(goalRun.distance - distance, 0);
 	const timeToGoal = Math.max(time - goalRun.time, 0);
 
