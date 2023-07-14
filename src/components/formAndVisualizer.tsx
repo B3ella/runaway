@@ -37,7 +37,7 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 	function saveRun(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
 		event.preventDefault();
 
-		const runData = { distance, time, name: runName, date: new Date() };
+		const runData = { distance, time, name: runName, date };
 		addNewRun(runData);
 
 		resetValues();
