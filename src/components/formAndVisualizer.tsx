@@ -89,14 +89,14 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 type DeleteRun = (arg: run) => void;
 
 function RunLi(run: run, deleteRun: DeleteRun, goalRun: NamelessRun) {
-	const { name, distance, time } = run;
+	const { name, distance, time, date } = run;
 
 	const meanVelocity = calcSpeed(run);
 	const goalVelocity = calcSpeed(goalRun);
 	const distanceToGoal = Math.max(goalRun.distance - distance, 0);
 	const timeToGoal = Math.max(time - goalRun.time, 0);
 
-	const key = `${name}${time}${meanVelocity}`;
+	const key = `${name}${time}${meanVelocity}${formatDateToString(date)}`;
 
 	return (
 		<li className="flex flex-col justify-between lg:w-1/3" key={key}>
