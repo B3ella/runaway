@@ -6,7 +6,7 @@ import {
 	getGoalRun,
 	NamelessRun,
 } from "./localStorageManager";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Children } from "react";
 import { select, scaleBand, scaleLinear, ScaleBand, ScaleLinear } from "d3";
 
 function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
@@ -196,19 +196,38 @@ function getScales(runs: run[], svgRef: SVGRef): scale {
 	};
 }
 
-interface point {
+interface Point {
 	x: number;
 	y: number;
 }
 
-function getLinePointsFor(x: string, y: number, scale: scale): point {
-	const { xScale, ySpeedScale, maxHeight } = scale;
+type Selector = "speed" | "distance" | "time";
+
+function getLinePointsFor(run: run, scale: scale, selector: Selector): Point {
+	const { xScale, ySpeedScale, yDistanceScale, yTimeScale, maxHeight } =
+		scale;
 	const point = { x: 0, y: 0 };
+
+	const yValueFor = { speed: 0, distance: 0, time: 0 };
+
+	const speed = calcSpeed(run);
+	yValueFor.speed = ySpeedScale(speed);
+
+	const { distance } = run;
+	yValueFor.distance = yDistanceScale(distance);
+
+	const { time } = run;
+	yValueFor.time = yTimeScale(time);
+
+	console.log(yValueFor);
+
+	point.y = maxHeight - yValueFor[selector];
+
+	const x = run.name;
 	point.x = xScale(x) ?? 0;
-	point.y = maxHeight - ySpeedScale(y);
 	return point;
 }
-function formatLinePoints({ x, y }: point): string {
+function formatLinePoints({ x, y }: Point): string {
 	return `${x},${y} `;
 }
 
@@ -225,17 +244,14 @@ function drawText(runs: run[], scale: scale, svgRef: SVGRef) {
 		.attr("x", (run) => xScale(run.name) ?? 0);
 }
 
-function drawSVG(runs: run[], svgRef: SVGRef) {
+function drawSVG(runs: run[], svgRef: SVGRef, selector: Selector) {
 	const scale = getScales(runs, svgRef);
 	drawText(runs, scale, svgRef);
 
 	let linePoints = formatLinePoints({ x: 0, y: scale.maxHeight });
 
 	runs.forEach((run) => {
-		const { name } = run;
-		const speed = calcSpeed(run);
-
-		const point = getLinePointsFor(name, speed, scale);
+		const point = getLinePointsFor(run, scale, selector);
 		linePoints += formatLinePoints(point);
 	});
 
@@ -243,11 +259,9 @@ function drawSVG(runs: run[], svgRef: SVGRef) {
 	polyline.attr("points", linePoints);
 }
 
-type mesure = "speed" | "time" | "distance";
-
 function Graph({ runs }: { runs: run[] }) {
 	const svgRef = useRef<SVGSVGElement>(null);
-	const [mesure, setMesure] = useState<mesure>("speed");
+	const [selector, setSelector] = useState<Selector>("speed");
 	const [width, setWidth] = useState(0);
 	const [height, setHeight] = useState(0);
 	function handleResize() {
@@ -260,14 +274,31 @@ function Graph({ runs }: { runs: run[] }) {
 		window.addEventListener("resize", handleResize);
 	}, []);
 
-	useEffect(() => drawSVG(runs, svgRef), [runs, width, height]);
+	useEffect(
+		() => drawSVG(runs, svgRef, selector),
+		[runs, width, height, selector]
+	);
+
+	const ChangeButton = ({ value }: { value: Selector }) => {
+		return (
+			<button
+				className="m-2 capitalize"
+				onClick={() => setSelector(value)}
+			>
+				{value}
+			</button>
+		);
+	};
 
 	return (
 		<div className="lg:h-[50vh] lg:w-[50vw] m-auto max-sm:m-4 border p-4 flex flex-col border-black">
-			<h3>{mesure} change over time</h3>
+			<h3>{selector} change over time</h3>
 			<svg className="border flex-1 border-black" ref={svgRef}>
 				<polyline stroke="#000" strokeWidth="2" fill="none" />
 			</svg>
+			<ChangeButton value="time" />
+			<ChangeButton value="speed" />
+			<ChangeButton value="distance" />
 		</div>
 	);
 }
