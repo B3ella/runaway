@@ -9,6 +9,13 @@ import {
 import { useEffect, useState, useRef } from "react";
 import { select, scaleBand, scaleLinear, ScaleBand, ScaleLinear } from "d3";
 
+function pad(string: string, char: string, length: number): string {
+	while (string.length < length) {
+		string = char + string;
+	}
+	return string;
+}
+
 function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 	const [distance, setDistance] = useState(0);
 	const [time, setTime] = useState(0);
@@ -17,13 +24,13 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 
 	function getStringDate() {
 		let year = date.getFullYear().toString();
-		while (year.length < 4) year = "0" + year;
+		year = pad(year, "0", 4);
 
 		let month = date.getMonth().toString();
-		if (month.length < 2) month = "0" + month;
+		month = pad(month, "0", 2);
 
 		let day = date.getDate().toString();
-		if (day.length < 2) day = "0" + day;
+		day = pad(day, "0", 2);
 
 		return `${year}-${month}-${day}`;
 	}
@@ -34,6 +41,12 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 		setRunName("");
 	}
 
+	type changeEvent = React.ChangeEvent<HTMLInputElement>;
+	const changeDistance = (e: changeEvent) => setDistance(+e.target.value);
+	const changeTime = (e: changeEvent) => setTime(+e.target.value);
+	const changeRunName = (e: changeEvent) => setRunName(e.target.value);
+	const changeDate = (e: changeEvent) => setDate(new Date(e.target.value));
+
 	function saveRun(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
 		event.preventDefault();
 
@@ -42,13 +55,6 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 
 		resetValues();
 	}
-
-	type changeEvent = React.ChangeEvent<HTMLInputElement>;
-	const changeDistance = (e: changeEvent) => setDistance(+e.target.value);
-	const changeTime = (e: changeEvent) => setTime(+e.target.value);
-	const changeRunName = (e: changeEvent) => setRunName(e.target.value);
-	const changeDate = (e: changeEvent) => setDate(new Date(e.target.value));
-
 	return (
 		<form className="flex flex-col gap-4 items-baseline w-fit m-auto">
 			<label>
