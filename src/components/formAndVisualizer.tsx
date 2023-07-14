@@ -144,29 +144,56 @@ function calcSpeed({
 
 interface scale {
 	xScale: ScaleBand<string>;
-	yScale: ScaleLinear<number, number, never>;
+	ySpeedScale: ScaleLinear<number, number, never>;
+	yDistanceScale: ScaleLinear<number, number, never>;
+	yTimeScale: ScaleLinear<number, number, never>;
 	maxHeight: number;
 	maxWidth: number;
 }
 type SVGRef = React.RefObject<SVGSVGElement>;
 
-function getScales(runs: run[], svgRef: SVGRef): scale {
-	const runNames = runs.map((run) => run.name);
-	const runSpeeds = runs.map(calcSpeed);
+function calcTopDomain(domain: number[]): number {
+	const max = Math.max(...domain);
+	const margin = Math.ceil(max / 10);
 
+	return max + margin;
+}
+
+function getScales(runs: run[], svgRef: SVGRef): scale {
 	const maxWidth = svgRef.current?.width.baseVal.value ?? 0;
 	const maxHeight = svgRef.current?.height.baseVal.value ?? 0;
 
-	const maxSpeed = Math.max(...runSpeeds);
-	const margin = Math.ceil(maxSpeed / 10);
-	const topDomain = maxSpeed + margin;
-	const yScale = scaleLinear().domain([0, topDomain]).range([0, maxHeight]);
+	const runSpeeds = runs.map(calcSpeed);
+	const topSpeedDomain = calcTopDomain(runSpeeds);
+	const ySpeedScale = scaleLinear()
+		.domain([0, topSpeedDomain])
+		.range([0, maxHeight]);
 
+	const runDistances = runs.map((run) => run.distance);
+	const topDistanceDomain = calcTopDomain(runDistances);
+	const yDistanceScale = scaleLinear()
+		.domain([0, topDistanceDomain])
+		.range([0, maxHeight]);
+
+	const runTimes = runs.map((run) => run.time);
+	const topTimeDomain = calcTopDomain(runTimes);
+	const yTimeScale = scaleLinear()
+		.domain([0, topTimeDomain])
+		.range([0, maxHeight]);
+
+	const runNames = runs.map((run) => run.name);
 	const xScale = scaleBand()
 		.domain(["", ...runNames])
 		.range([0, maxWidth]);
 
-	return { xScale, yScale, maxHeight, maxWidth };
+	return {
+		xScale,
+		ySpeedScale,
+		yDistanceScale,
+		yTimeScale,
+		maxHeight,
+		maxWidth,
+	};
 }
 
 interface point {
@@ -175,10 +202,10 @@ interface point {
 }
 
 function getLinePointsFor(x: string, y: number, scale: scale): point {
-	const { xScale, yScale, maxHeight } = scale;
+	const { xScale, ySpeedScale, maxHeight } = scale;
 	const point = { x: 0, y: 0 };
 	point.x = xScale(x) ?? 0;
-	point.y = maxHeight - yScale(y);
+	point.y = maxHeight - ySpeedScale(y);
 	return point;
 }
 function formatLinePoints({ x, y }: point): string {
@@ -186,7 +213,7 @@ function formatLinePoints({ x, y }: point): string {
 }
 
 function drawText(runs: run[], scale: scale, svgRef: SVGRef) {
-	const { maxHeight, yScale, xScale } = scale;
+	const { xScale } = scale;
 	const svg = select(svgRef.current);
 	const textOffset = 15;
 	svg.selectAll("text")
@@ -194,7 +221,7 @@ function drawText(runs: run[], scale: scale, svgRef: SVGRef) {
 		.enter()
 		.append("text")
 		.text((run) => run.name)
-		.attr("y", (run) => maxHeight - yScale(calcSpeed(run)) - textOffset)
+		.attr("y", textOffset)
 		.attr("x", (run) => xScale(run.name) ?? 0);
 }
 
@@ -216,9 +243,11 @@ function drawSVG(runs: run[], svgRef: SVGRef) {
 	polyline.attr("points", linePoints);
 }
 
+type mesure = "speed" | "time" | "distance";
+
 function Graph({ runs }: { runs: run[] }) {
 	const svgRef = useRef<SVGSVGElement>(null);
-
+	const [mesure, setMesure] = useState<mesure>("speed");
 	const [width, setWidth] = useState(0);
 	const [height, setHeight] = useState(0);
 	function handleResize() {
@@ -235,7 +264,7 @@ function Graph({ runs }: { runs: run[] }) {
 
 	return (
 		<div className="lg:h-[50vh] lg:w-[50vw] m-auto max-sm:m-4 border p-4 flex flex-col border-black">
-			<h3>{"Speed"} change over time</h3>
+			<h3>{mesure} change over time</h3>
 			<svg className="border flex-1 border-black" ref={svgRef}>
 				<polyline stroke="#000" strokeWidth="2" fill="none" />
 			</svg>
