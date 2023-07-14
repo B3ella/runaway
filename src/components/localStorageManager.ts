@@ -56,7 +56,7 @@ function removeRunFromLocalStorage(targetRun: run): void {
 	setRuns(currRuns);
 }
 
-function getGoalRun(): NamelessRun | null {
+function getStoredGoalRun(): NamelessRun | null {
 	const res = localStorage.getItem(goalRunTolken);
 	return res ? JSON.parse(res) : null;
 }
@@ -70,7 +70,7 @@ export {
 	getRuns,
 	addRunToLocalStorage,
 	removeRunFromLocalStorage,
-	getGoalRun,
+	getStoredGoalRun,
 	setGoalRun,
 	type run,
 	type NamelessRun,

@@ -3,8 +3,8 @@ import {
 	addRunToLocalStorage,
 	removeRunFromLocalStorage,
 	type run,
-	getGoalRun,
 	NamelessRun,
+	getStoredGoalRun,
 } from "./localStorageManager";
 import { useEffect, useState, useRef } from "react";
 import { select, scaleBand, scaleLinear, ScaleBand, ScaleLinear } from "d3";
@@ -104,14 +104,16 @@ interface DSProps {
 
 function DataVisualizer({ runs, deleteRun }: DSProps) {
 	const defaultGoalRun = { distance: 0, time: 0 };
-	const [goalRun, setGoalRun] = useState(defaultGoalRun);
+	const [goalRunState, setGoalRunState] = useState(defaultGoalRun);
 
 	useEffect(() => {
-		const goal = getGoalRun() ?? defaultGoalRun;
-		setGoalRun(goal);
+		const goal = getStoredGoalRun() ?? defaultGoalRun;
+		setGoalRunState(goal);
 	}, []);
 
-	const runsAsListItems = runs.map((run) => RunLi(run, deleteRun, goalRun));
+	const runsAsListItems = runs.map((run) =>
+		RunLi(run, deleteRun, goalRunState)
+	);
 	return (
 		<ul className="flex flex-col gap-4 items-center pt-8 md:p-16">
 			{runsAsListItems}
