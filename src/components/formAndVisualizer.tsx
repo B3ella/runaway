@@ -1,7 +1,7 @@
 import {
 	getRuns,
-	addRun,
-	removeRun,
+	addRunToLocalStorage,
+	removeRunFromLocalStorage,
 	type run,
 	getGoalRun,
 	NamelessRun,
@@ -304,19 +304,23 @@ function Graph({ runs }: { runs: run[] }) {
 }
 
 export default function FormAndVisualizer() {
-	const [runs, setRunState] = useState<run[]>([]);
+	const [runsState, setRunState] = useState<run[]>([]);
+
+	function syncStateToLocalStorage() {
+		setRunState(getRuns());
+	}
 
 	function addNewRun(run: run) {
-		setRunState(addRun(run));
+		addRunToLocalStorage(run);
+		syncStateToLocalStorage();
 	}
 
 	function deleteRun(run: run) {
-		setRunState(removeRun(run));
+		removeRunFromLocalStorage(run);
+		syncStateToLocalStorage();
 	}
 
-	useEffect(() => {
-		setRunState(getRuns());
-	}, []);
+	useEffect(syncStateToLocalStorage, []);
 
 	return (
 		<section className="min-h-screen font-mono " id="get-started">
@@ -324,8 +328,8 @@ export default function FormAndVisualizer() {
 				Fill with your latest runs
 			</h2>
 			<Form addNewRun={addNewRun} />
-			<DataVisualizer runs={runs} deleteRun={deleteRun} />
-			<Graph runs={runs} />
+			<DataVisualizer runs={runsState} deleteRun={deleteRun} />
+			<Graph runs={runsState} />
 		</section>
 	);
 }

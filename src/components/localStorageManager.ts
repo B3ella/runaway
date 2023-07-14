@@ -18,17 +18,15 @@ function getRuns(): run[] {
 	return runs ? JSON.parse(runs) : [];
 }
 
-function setRuns(runs: run[]): run[] {
+function setRuns(runs: run[]): void {
 	const sRuns = JSON.stringify(runs);
 	localStorage.setItem(runTolken, sRuns);
-	return runs;
 }
 
-function addRun(run: run): run[] {
+function addRunToLocalStorage(run: run): void {
 	const currRuns = getRuns();
-
 	const newRuns = [...currRuns, run];
-	return setRuns(newRuns);
+	setRuns(newRuns);
 }
 
 function areTheSameRun(run1: run, run2: run): boolean {
@@ -44,16 +42,18 @@ function findRunIndex(targetRun: run): number {
 	return currRuns.findIndex((run) => areTheSameRun(run, targetRun));
 }
 
-function removeRun(targetRun: run): run[] {
+function removeRunFromLocalStorage(targetRun: run): void {
 	const currRuns = getRuns();
 	const index = findRunIndex(targetRun);
 
 	const isLastRun = currRuns.length === 1 && index === 0;
-	if (isLastRun) return setRuns([]);
+	if (isLastRun) {
+		setRuns([]);
+		return;
+	}
 
 	currRuns.splice(index, 1);
-	console.log(currRuns, index, targetRun);
-	return setRuns(currRuns);
+	setRuns(currRuns);
 }
 
 function getGoalRun(): NamelessRun | null {
@@ -68,8 +68,8 @@ function setGoalRun(run: NamelessRun): void {
 
 export {
 	getRuns,
-	addRun,
-	removeRun,
+	addRunToLocalStorage,
+	removeRunFromLocalStorage,
 	getGoalRun,
 	setGoalRun,
 	type run,
