@@ -107,7 +107,8 @@ function DataVisualizer({ runs, deleteRun }: DSProps) {
 	const [goalRun, setGoalRun] = useState(defaultGoalRun);
 
 	useEffect(() => {
-		setGoalRun(getGoalRun() ?? defaultGoalRun);
+		const goal = getGoalRun() ?? defaultGoalRun;
+		setGoalRun(goal);
 	}, []);
 
 	const runComp = runs.map((run) => RunLi(run, deleteRun, goalRun));
