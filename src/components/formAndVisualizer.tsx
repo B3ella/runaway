@@ -6,7 +6,7 @@ import {
 	getGoalRun,
 	NamelessRun,
 } from "./localStorageManager";
-import { useEffect, useState, useRef, Children } from "react";
+import { useEffect, useState, useRef } from "react";
 import { select, scaleBand, scaleLinear, ScaleBand, ScaleLinear } from "d3";
 
 function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
@@ -16,9 +16,12 @@ function Form({ addNewRun }: { addNewRun: (arg: run) => void }) {
 	const [date, setDate] = useState(new Date());
 
 	function getStringDate() {
-		const year = date.getFullYear().toString();
+		let year = date.getFullYear().toString();
+		while (year.length < 4) year = "0" + year;
+
 		let month = date.getMonth().toString();
 		if (month.length < 2) month = "0" + month;
+
 		let day = date.getDate().toString();
 		if (day.length < 2) day = "0" + day;
 
