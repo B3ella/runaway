@@ -111,10 +111,10 @@ function DataVisualizer({ runs, deleteRun }: DSProps) {
 		setGoalRun(goal);
 	}, []);
 
-	const runComp = runs.map((run) => RunLi(run, deleteRun, goalRun));
+	const runsAsListItems = runs.map((run) => RunLi(run, deleteRun, goalRun));
 	return (
 		<ul className="flex flex-col gap-4 items-center pt-8 md:p-16">
-			{runComp}
+			{runsAsListItems}
 		</ul>
 	);
 }
