@@ -212,8 +212,6 @@ function getLinePointsFor(run: run, scale: scale, selector: Selector): Point {
 	const { time } = run;
 	yValueFor.time = yTimeScale(time);
 
-	console.log(yValueFor);
-
 	point.y = maxHeight - yValueFor[selector];
 
 	const x = run.name;

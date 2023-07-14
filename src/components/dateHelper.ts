@@ -6,6 +6,7 @@ function pad(string: string, char: string, length: number): string {
 }
 
 function formatDateToString(date: Date) {
+	date = new Date(date);
 	let year = date.getFullYear().toString();
 	year = pad(year, "0", 4);
 
