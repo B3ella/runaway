@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getGoalRun, setGoalRun } from "./localStorageManager";
+import { getStoredGoalRun, setGoalRun } from "./localStorageManager";
 
 export default function SetGoal() {
 	const [distance, setDistance] = useState(0);
@@ -9,7 +9,7 @@ export default function SetGoal() {
 	const [goalState, setGoalState] = useState(defaultRunState);
 
 	useEffect(() => {
-		setGoalState(getGoalRun() ?? defaultRunState);
+		setGoalState(getStoredGoalRun() ?? defaultRunState);
 	}, []);
 
 	type changeEvent = React.ChangeEvent<HTMLInputElement>;
