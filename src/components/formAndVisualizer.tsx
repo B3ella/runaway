@@ -196,24 +196,25 @@ interface Point {
 
 type Selector = "speed" | "distance" | "time";
 
-function getLinePointsFor(run: run, scale: scale, selector: Selector): Point {
-	const { xScale, ySpeedScale, yDistanceScale, yTimeScale, maxHeight } =
-		scale;
-	const point = { x: 0, y: 0 };
-
+function getYFor(selector: Selector, run: run, scale: scale): number {
 	const yValueFor = { speed: 0, distance: 0, time: 0 };
 
 	const speed = calcSpeed(run);
-	yValueFor.speed = ySpeedScale(speed);
+	yValueFor.speed = scale.ySpeedScale(speed);
 
 	const { distance } = run;
-	yValueFor.distance = yDistanceScale(distance);
+	yValueFor.distance = scale.yDistanceScale(distance);
 
 	const { time } = run;
-	yValueFor.time = yTimeScale(time);
+	yValueFor.time = scale.yTimeScale(time);
+	return scale.maxHeight - yValueFor[selector];
+}
 
-	point.y = maxHeight - yValueFor[selector];
+function getLinePointsFor(run: run, scale: scale, selector: Selector): Point {
+	const { xScale } = scale;
+	const point = { x: 0, y: 0 };
 
+	point.y = getYFor(selector, run, scale);
 	const x = run.name;
 	point.x = xScale(x) ?? 0;
 	return point;
